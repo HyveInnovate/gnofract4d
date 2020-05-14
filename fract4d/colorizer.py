@@ -1,5 +1,5 @@
-from fract4d_compiler import fc, fctutils
-from . import gradient
+from fract4d_compiler import fc
+from . import fctutils, gradient
 
 
 class T(fctutils.T):

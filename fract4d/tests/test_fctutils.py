@@ -4,7 +4,7 @@
 import io
 import unittest
 
-from fract4d_compiler import fctutils
+from fract4d import fctutils
 
 
 class Test(unittest.TestCase):

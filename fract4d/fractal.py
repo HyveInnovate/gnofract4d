@@ -6,8 +6,8 @@ import math
 import random
 from time import time as now
 
-from fract4d_compiler import fc, fctutils
-from . import colorizer, formsettings, fract4dc, gradient
+from fract4d_compiler import fc
+from . import colorizer, fctutils, formsettings, fract4dc, gradient
 
 # the version of the earliest gf4d release which can parse all the files
 # this version can output
