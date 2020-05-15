@@ -101,7 +101,8 @@ class T(fctutils.T):
         self.reset()
 
         # interaction with fract4dc library
-        self.site = site or fract4dc.site_create(self)
+        # self.site = site or fract4dc.site_create(self)
+        self.controller = None
 
         # colorfunc lookup
         self.colorfunc_names = [
@@ -275,7 +276,7 @@ class T(fctutils.T):
         # override shallow-copy to do a deeper copy than normal,
         # but still don't try and copy *everything*
 
-        c = T(self.compiler, self.site)
+        c = T(self.compiler, None)
 
         c.maxiter = self.maxiter
         c.params = copy.copy(self.params)
@@ -622,13 +623,15 @@ class T(fctutils.T):
             self.set_output_file(outputfile)
 
         self.dirtyFormula = False
+
         return self.outputfile
 
     def set_output_file(self, outputfile):
         if self.outputfile != outputfile:
             self.outputfile = outputfile
-            self.handle = fract4dc.pf_load(self.outputfile)
-            self.pfunc = fract4dc.pf_create(self.handle)
+            self.init_pfunc()
+            # self.handle = fract4dc.pf_load(self.outputfile)
+            # self.pfunc = fract4dc.pf_create(self.handle)
 
     def make_random_colors(self, n):
         self.get_gradient().randomize(n)
@@ -788,8 +791,11 @@ class T(fctutils.T):
         return cmap
 
     def init_pfunc(self):
-        initparams = self.all_params()
-        fract4dc.pf_init(self.pfunc, self.params, initparams)
+        # initparams = self.all_params()
+        # fract4dc.pf_init(self.pfunc, self.params, initparams)
+        self.controller = fract4dc.create_controller(self.outputfile, self.all_params(), self.params)
+        self.controller.set_message_handler(self)
+        return self.controller
 
     def get_warp(self):
         if self.warp_param:
@@ -819,14 +825,14 @@ class T(fctutils.T):
             self.changed(True)
 
     def calc(self, image, colormap, nthreads, site, asynchronous):
-        fract4dc.calc(
+        self.controller.start_calculating(
             params=self.params,
             antialias=self.antialias,
             maxiter=self.maxiter,
             yflip=self.yflip,
             periodicity=self.periodicity,
             nthreads=nthreads,
-            pfo=self.pfunc,
+            # pfo=self.pfunc,
             cmap=colormap,
             auto_deepen=self.auto_deepen,
             auto_tolerance=self.auto_tolerance,
@@ -834,12 +840,31 @@ class T(fctutils.T):
             render_type=self.render_type,
             warp_param=self.get_warp(),
             image=image._img,
-            site=site,
+            # site=site,
             dirty=self.clear_image,
             asynchronous=asynchronous)
+        # fract4dc.calc(
+        #     params=self.params,
+        #     antialias=self.antialias,
+        #     maxiter=self.maxiter,
+        #     yflip=self.yflip,
+        #     periodicity=self.periodicity,
+        #     nthreads=nthreads,
+        #     pfo=self.pfunc,
+        #     cmap=colormap,
+        #     auto_deepen=self.auto_deepen,
+        #     auto_tolerance=self.auto_tolerance,
+        #     tolerance=self.period_tolerance,
+        #     render_type=self.render_type,
+        #     warp_param=self.get_warp(),
+        #     image=image._img,
+        #     site=site,
+        #     dirty=self.clear_image,
+        #     asynchronous=asynchronous)
+
 
     def drawpoint(self, repeats=1000):
-        self.init_pfunc()
+        # self.init_pfunc()
         print("x:\t\t%.17f\ny:\t\t%.17f\nz:\t\t%.17f\nw:\t\t%.17f\n" %
               tuple(self.params[0:4]))
         startTime = now()
@@ -852,14 +877,15 @@ class T(fctutils.T):
         print("duration:\t%.4g" % duration)
 
     def draw(self, image, nthreads=1):
-        self.init_pfunc()
+        # self.init_pfunc()
 
         colormap = self.get_colormap()
         for (xoff, yoff, xres, yres) in image.get_tile_list():
             image.resize_tile(xres, yres)
             image.set_offset(xoff, yoff)
 
-            self.calc(image, colormap, nthreads, self.site, False)
+            # self.calc(image, colormap, nthreads, self.site, False)
+            self.calc(image, colormap, nthreads, None, False)
 
             image.save_tile()
 

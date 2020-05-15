@@ -58,6 +58,7 @@ class Hidden(GObject.GObject):
         GObject.GObject.__init__(self)
 
         (self.readfd, self.writefd) = os.pipe()
+
         self.nthreads = 1
 
         self.compiler = comp
@@ -69,7 +70,9 @@ class Hidden(GObject.GObject):
         self.running = False
         self.frozen = False  # if true, don't emit signals
 
-        self.site = fract4dc.fdsite_create(self.writefd)
+        # this fd should be sent to the controller
+        # self.site = fract4dc.fdsite_create(self.writefd)
+
         self.f = None
         self.try_init_fractal()
 
@@ -83,7 +86,8 @@ class Hidden(GObject.GObject):
         self.msgbuf = b""
 
     def try_init_fractal(self):
-        f = fractal.T(self.compiler, self.site)
+        # f = fractal.T(self.compiler, self.site)
+        f = fractal.T(self.compiler, None)
         self.set_fractal(f)
         self.f.compile()
 
@@ -152,7 +156,10 @@ class Hidden(GObject.GObject):
 
         self.skip_updates = True
 
-        fract4dc.interrupt(self.site)
+        # change this to controller.stop_calculating
+        # fract4dc.interrupt(self.site)
+        if (self.f.controller):
+            self.f.controller.stop_calculating()
 
         n = 0
         # wait for stream from worker to flush
@@ -266,7 +273,8 @@ class Hidden(GObject.GObject):
         self.changed()
 
     def loadFctFile(self, file):
-        new_f = fractal.T(self.compiler, self.site)
+        # new_f = fractal.T(self.compiler, self.site)
+        new_f = fractal.T(self.compiler, None)
         new_f.warn = self.warn
         new_f.loadFctFile(file)
         self.set_fractal(new_f)
@@ -306,12 +314,13 @@ class Hidden(GObject.GObject):
         if self.f.auto_epsilon:
             self.f.set_named_param("@epsilon", t,
                                    self.f.formula, self.f.initparams)
-
         self.f.init_pfunc()
+        self.f.controller.set_fd(self.writefd)
         cmap = self.f.get_colormap()
         self.running = True
         try:
-            self.f.calc(image, cmap, nthreads, self.site, True)
+            # self.f.calc(image, cmap, nthreads, self.site, True)
+            self.f.calc(image, cmap, nthreads, None, True)
         except MemoryError:
             pass
 
@@ -325,7 +334,6 @@ class Hidden(GObject.GObject):
         if aa is not None and auto_deepen is not None:
             self.f.antialias = aa
             self.f.auto_deepen = auto_deepen
-
         self.draw(self.image, self.width, self.height, self.nthreads)
 
     def set_plane(self, angle1, angle2):
