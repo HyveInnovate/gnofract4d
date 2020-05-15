@@ -162,3 +162,9 @@ Execute:
 examples/cpp/mp_mandelbrot.sh
 ```
 Then you should see a new file under `examples/output`.
+
+### Running examples with Valgrind
+If you want to check for memory leaks you can run a container with this command:
+```
+docker run --rm -it mp_mandelbrot:1.0.0 bash -c "valgrind --leak-check=yes /src/example"
+```
