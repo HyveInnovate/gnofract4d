@@ -1,0 +1,14 @@
+# # dont commit this: could affect other dockerfiles
+.tox/
+build/
+dist/
+doc/
+fractutils/
+maps/
+testdata/
+website/
+formulas/
+pixmaps/
+scripts/
+fract4dgui/
+fract4d_compiler/

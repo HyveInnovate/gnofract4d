@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-ENV TZ=Europe/Minsk
+ENV TZ=GMT
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
@@ -23,6 +23,15 @@ ENV formula_source=$formula_source
 ENV gmp_support=$gmp_support
 COPY examples/cpp/mp_double.h ./mp_double.h
 
-RUN cmake . && make
+RUN apt-get install -y curl tzdata
+RUN curl -sSL "https://github.com/facebook/infer/releases/download/v0.17.0/infer-linux64-v0.17.0.tar.xz" \
+	| tar -C /opt -xJ && \
+	ln -s "/opt/infer-linux64-v0.17.0/bin/infer" /usr/local/bin/infer
+
+
+RUN apt-get install -y python
+
+RUN cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 . && make
+RUN infer run --compilation-database compile_commands.json
 
 CMD ["./example"]
