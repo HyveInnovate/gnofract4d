@@ -1,18 +1,24 @@
-dist: bionic  # required for Python 3.6
-services:
-  - xvfb
-language: python
-python:
-  - "3.5"
-  - "3.6"
-  - "3.7"
-before_install:
-  sudo apt-get install -y libgirepository1.0-dev gir1.2-gtk-3.0
-install:
-  - python setup.py build
-  - pip install tox-travis pylint
-script:
-  - ./bin/pylint.sh || travis_terminate 1;
-  - tox
+jobs:
+  include:
+    - language: python
+      dist: bionic  # required for Python 3.6
+      services:
+        - xvfb
+        - docker
+      python: "3.5"
+      before_install:
+        sudo apt-get install -y libgirepository1.0-dev gir1.2-gtk-3.0
+      install:
+        - python setup.py build
+        - pip install tox-travis pylint
+      script:
+        - ./bin/pylint.sh || travis_terminate 1;
+        - tox
+    - language: shell
+      services:
+        - docker
+      os: linux
+      script:
+        - ./fract4d/c/test/run.sh
 notifications:
   email: false
