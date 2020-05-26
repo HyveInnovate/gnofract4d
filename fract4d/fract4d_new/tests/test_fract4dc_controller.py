@@ -30,6 +30,20 @@ class Test(Testbase.ClassSetup):
     def tearDown(self):
         del self.controller
 
+    def controller_start_calculating(self, color_map, image):
+        return self.controller.start_calculating(
+            params=LOCATION_PARAMS,
+            antialias=0,
+            maxiter=100,
+            yflip=0,
+            nthreads=1,
+            cmap=color_map,
+            auto_deepen=0,
+            periodicity=1,
+            render_type=0,
+            image=image,
+        )
+
     def test_set_message_handler(self):
         message_handler = MockMessageHandler()
 
@@ -45,18 +59,7 @@ class Test(Testbase.ClassSetup):
         image = ImageWrapper(TILE_SIZE, TILE_SIZE).get_img()
 
         initial_statuses_history = message_handler.get_statuses_history().copy()
-        self.controller.start_calculating(
-            params=LOCATION_PARAMS,
-            antialias=0,
-            maxiter=100,
-            yflip=0,
-            nthreads=1,
-            cmap=color_map,
-            auto_deepen=0,
-            periodicity=1,
-            render_type=0,
-            image=image,
-        )
+        self.controller_start_calculating(color_map, image)
         first_status = message_handler.get_statuses_history()[0]
 
         self.assertEqual(0, len(initial_statuses_history))
@@ -69,18 +72,7 @@ class Test(Testbase.ClassSetup):
         image = ImageWrapper(TILE_SIZE, TILE_SIZE).get_img()
 
         initial_statuses_history = message_handler.get_statuses_history().copy()
-        self.controller.start_calculating(
-            params=LOCATION_PARAMS,
-            antialias=0,
-            maxiter=100,
-            yflip=0,
-            nthreads=1,
-            cmap=color_map,
-            auto_deepen=0,
-            periodicity=1,
-            render_type=0,
-            image=image,
-        )
+        self.controller_start_calculating(color_map, image)
         first_status = message_handler.get_statuses_history()[0]
         self.controller.stop_calculating()
         last_status = message_handler.get_statuses_history()[-1]
