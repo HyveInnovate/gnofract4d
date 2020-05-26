@@ -1,5 +1,6 @@
 [MASTER]
 extension-pkg-whitelist=fract4d.fract4dc
+ignore=lextab.py,parsetab.py
 
 [MESSAGES CONTROL]
 disable=missing-docstring
@@ -12,3 +13,6 @@ additional-builtins=_
 
 [TYPECHECK]
 ignored-modules=gi,cairo,PIL
+
+[SIMILARITIES]
+min-similarity-lines=8

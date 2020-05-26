@@ -1,3 +1,6 @@
+[MASTER]
+ignore=lextab.py,parsetab.py
+
 [MESSAGES CONTROL]
 disable=all
 enable=E,
@@ -9,8 +12,6 @@ enable=E,
   bare-except,
   singleton-comparison,
   unused-import
-
-ignore=parsetab.py,lextab.py
 
 [REPORTS]
 score=no

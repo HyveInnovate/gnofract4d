@@ -6,7 +6,7 @@ then
   exit 1
 fi
 
-pylint --rcfile pylintrc_new fract4d/fract4d_new
+pylint --rcfile pylintrc_new fract4d/fract4d_new examples/python/*.py
 if [[ $? > 0 ]]
 then
   exit 1
