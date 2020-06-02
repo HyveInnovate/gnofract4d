@@ -246,15 +246,6 @@ class Compiler:
         raise IOError("Can't find formula file %s in formula search path" %
                       filename)
 
-    def compile_one(self, formula):
-        self.compile(formula)
-
-        t = translate.T(absyn.Formula("", [], -1))
-        cg = self.compile(t)
-        t.merge(formula, "")
-        outputfile = os.path.abspath(self.generate_code(t, cg))
-        return outputfile
-
     def compile_all(self, formula, cf0, cf1, transforms, options={}):
         self.compile(formula, options)
         self.compile(cf0, options)
