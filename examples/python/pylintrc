@@ -1,0 +1,7 @@
+[MASTER]
+extension-pkg-whitelist=fract4d.fract4dc
+
+[MESSAGES CONTROL]
+disable=duplicate-code,
+  missing-docstring,
+  wrong-import-position

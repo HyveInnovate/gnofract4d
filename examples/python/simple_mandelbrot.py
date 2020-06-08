@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# ignore pylint invalid-name, wrong-import-position
-# pylint: disable=C0103,C0413
 
 import os
 import sys
