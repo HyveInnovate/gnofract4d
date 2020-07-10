@@ -39,3 +39,6 @@ docs/manual/stdlib/*
 
 # edit
 .vscode/
+
+# xcode setup
+xcode-env/*
